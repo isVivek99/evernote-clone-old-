@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import firebase from "firebase" ;
+import 'firebase/storage';
+import SidebarComponent from './sidebar/sidebar';
+import EditorComponent from './editor/editor';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends React.Component {
+ 
+  constructor(){
+    
+    super();
+    this.state={
+      selectedNoteIndex:null,
+      selectedNote:null,
+      notes:null
+    };
+  }
+
+
+  render(){
+
+    return( 
+      <div className="app-container">
+        Hello commene
+        <SidebarComponent></SidebarComponent>
+        <EditorComponent></EditorComponent>
+      </div> );
+  }
+  //on snapshot creates an object which contains all elements 
+  // (say) serverUpdate is the object which has  an attribute docs 
+  // docs must be an array  on which we map using an iterator 
+  componentDidMount= ()=>{
+    firebase.
+      firestore()
+      .collection('notes')
+      .onSnapshot(serverUpdate =>{          
+        const notes = serverUpdate.docs.map(doc=>{                                      
+          const data = doc.data();                
+          data['id'] = doc.id;
+          return data;
+        });
+        console.log(notes);
+        this.setState({ notes:notes });
+      });
+      
+    }
 }
+
+
 
 export default App;
